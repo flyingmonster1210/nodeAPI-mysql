@@ -11,6 +11,6 @@ const pool = mysql.createPool({
   connectionLimit: process.env.DB_CONNECTION_LIMIT,
 })
 
-export default pool
+module.exports = pool
 
 
