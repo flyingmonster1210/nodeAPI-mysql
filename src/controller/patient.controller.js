@@ -38,13 +38,15 @@ const getPatient = (req, res) => {
 
 const createPatient = (req, res) => {
   logger.info(`${req.method} ${req.originalurl}, creating patient`)
-  database.query(QUERY.CREATE_PATIENT, Object.values(req.body), (error, results) => {
+  const body = req.body
+  const values = [body.first_name, body.last_name, body.email, body.address, body.diagnosis, body.phone, body.image_url]
+  database.query(QUERY.CREATE_PATIENT, values, (error, results) => {
     if (!results) {
       logger.error(error.message)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR.code).send(new Response(HttpStatus.INTERNAL_SERVER_ERROR.code, HttpStatus.INTERNAL_SERVER_ERROR.status, `Error occured`))
     }
     else {
-      const patient = { id: results.insertedId, ...req.body, created_at: new Date() }
+      const patient = { id: results.insertId, ...req.body, created_at: new Date() }
       res.status(HttpStatus.CREATED.code).send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, `Patient created`, { patient }))
     }
   })
@@ -57,7 +59,9 @@ const updatePatient = (req, res) => {
       res.status(HttpStatus.NOT_FOUND.code).send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, `Patient by id:${req.params.id} not found`))
     }
     else {
-      database.query(QUERY.UPDATE_PATIENT, [...Object.values(req.body), req.params.id], (error, results) => {
+      const body = req.body
+      const values = [body.first_name, body.last_name, body.email, body.address, body.diagnosis, body.phone, body.image_url]
+      database.query(QUERY.UPDATE_PATIENT, [...values, req.params.id], (error, results) => {
         if (!error) {
           res.status(HttpStatus.OK.code).send(new Response(HttpStatus.OK.code, HttpStatus.OK.status, `Patient updated`, { id: req.params.id, ...req.body }))
         }
