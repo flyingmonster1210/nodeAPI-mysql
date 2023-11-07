@@ -13,7 +13,7 @@ const HttpStatus = {
 }
 
 const getPatients = (req, res) => {
-  logger.info(`${req.method} ${req.originalurl}, fetching patients`)
+  logger.info(`${req.method} ${req.originalUrl}, fetching patients`)
   database.query(QUERY.SELECT_PATIENTS, (error, results) => {
     if (!results) {
       res.status(HttpStatus.OK.code).send(new Response(HttpStatus.OK.code, HttpStatus.OK.status, `No patients found`))
@@ -25,7 +25,7 @@ const getPatients = (req, res) => {
 }
 
 const getPatient = (req, res) => {
-  logger.info(`${req.method} ${req.originalurl}, fetching patient`)
+  logger.info(`${req.method} ${req.originalUrl}, fetching patient`)
   database.query(QUERY.SELECT_PATIENT, [req.params.id], (error, results) => {
     if (!results[0]) {
       res.status(HttpStatus.NOT_FOUND.code).send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, `Patient by id:${req.params.id} not found`))
@@ -37,7 +37,7 @@ const getPatient = (req, res) => {
 }
 
 const createPatient = (req, res) => {
-  logger.info(`${req.method} ${req.originalurl}, creating patient`)
+  logger.info(`${req.method} ${req.originalUrl}, creating patient`)
   const body = req.body
   const values = [body.first_name, body.last_name, body.email, body.address, body.diagnosis, body.phone, body.image_url]
   database.query(QUERY.CREATE_PATIENT_PROCEDURE, values, (error, results) => {
@@ -46,7 +46,6 @@ const createPatient = (req, res) => {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR.code).send(new Response(HttpStatus.INTERNAL_SERVER_ERROR.code, HttpStatus.INTERNAL_SERVER_ERROR.status, `Error occured`))
     }
     else {
-      // const patient = { id: results.insertId, ...req.body, created_at: new Date() }
       const patient = results[0][0]
       res.status(HttpStatus.CREATED.code).send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, `Patient created`, { patient }))
     }
@@ -54,7 +53,7 @@ const createPatient = (req, res) => {
 }
 
 const updatePatient = (req, res) => {
-  logger.info(`${req.method} ${req.originalurl}, updating patient`)
+  logger.info(`${req.method} ${req.originalUrl}, updating patient`)
   database.query(QUERY.SELECT_PATIENT, [req.params.id], (error, results) => {
     if (!results[0]) {
       res.status(HttpStatus.NOT_FOUND.code).send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, `Patient by id:${req.params.id} not found`))
@@ -76,7 +75,7 @@ const updatePatient = (req, res) => {
 }
 
 const deletePatient = (req, res) => {
-  logger.info(`${req.method} ${req.originalurl}, deleting patient`)
+  logger.info(`${req.method} ${req.originalUrl}, deleting patient`)
   database.query(QUERY.DELETE_PATIENT, [req.params.id], (error, results) => {
     if (results.affectedRows > 0) {
       res.status(HttpStatus.OK.code).send(new Response(HttpStatus.OK.code, HttpStatus.OK.status, `Patient deleted`, results[0]))
