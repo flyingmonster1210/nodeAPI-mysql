@@ -40,13 +40,14 @@ const createPatient = (req, res) => {
   logger.info(`${req.method} ${req.originalurl}, creating patient`)
   const body = req.body
   const values = [body.first_name, body.last_name, body.email, body.address, body.diagnosis, body.phone, body.image_url]
-  database.query(QUERY.CREATE_PATIENT, values, (error, results) => {
+  database.query(QUERY.CREATE_PATIENT_PROCEDURE, values, (error, results) => {
     if (!results) {
       logger.error(error.message)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR.code).send(new Response(HttpStatus.INTERNAL_SERVER_ERROR.code, HttpStatus.INTERNAL_SERVER_ERROR.status, `Error occured`))
     }
     else {
-      const patient = { id: results.insertId, ...req.body, created_at: new Date() }
+      // const patient = { id: results.insertId, ...req.body, created_at: new Date() }
+      const patient = results[0][0]
       res.status(HttpStatus.CREATED.code).send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, `Patient created`, { patient }))
     }
   })
